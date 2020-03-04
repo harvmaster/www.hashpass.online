@@ -16,8 +16,8 @@
           <service-card v-for="service in services" :service="service" class="" :key="service.name" @deleted="updateServices" @nosecret="toggleSecret" style="" />
         </div>
       </div>
-      <login-modal ref="loginModal" class="" @updateServices='updServices' @secretSet="hashService" />
-      <secret-modal ref="secretModal" />
+      <login-modal ref="loginModal" class="" @updateServices='updServices' />
+      <secret-modal ref="secretModal" @secretSet="hashService" />
     </div>
   </q-page>
 

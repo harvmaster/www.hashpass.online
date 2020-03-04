@@ -49,7 +49,7 @@ export default {
   methods: {
     toggleVisible: function() {
       this.visible = !this.visible;
-      if (this.visible) this.$refs.secret.focus()
+      if (this.visible) this.$nextTick( () => this.$refs.secret.focus());
     },
     setSecret: function() {
       const secret = this.secret;
