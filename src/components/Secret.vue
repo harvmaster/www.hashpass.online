@@ -54,6 +54,7 @@ export default {
     setSecret: function() {
       const secret = this.secret;
       this.$q.sessionStorage.set('secret', secret);
+      this.$emit("secretSet")
       this.toggleVisible();
     }
 

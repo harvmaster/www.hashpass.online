@@ -1,31 +1,63 @@
 <template>
-  <q-page class="flex flex-center" style="height: 100%">
-    <div class=" servicepage bg-teal-4 fit q-py-xl">
-      <div style="grid-area: header; display: grid" class="fit header">
+  <q-page class="flex flex-center" style="">
+    <div class=" servicepage bg-teal-4 q-py-xl">
+      <div style="grid-area: header; display: grid" class="header">
         <div style="grid-area: icon; display: grid; grid-template-columns: 2fr auto 2 fr; grid-template-area: '. ic .'" class="fit">
           <q-icon name="lock_open" class="" :color="lockColor" rounded size="5em" style="grid-area: ic" @click="toggleLogin" @mouseover="lockColor='red-4'" @mouseleave="lockColor='grey-9'"/>
         </div>
         <div style="grid-area: subtitle; text-align: center" class="text-subtitle2">{{ !$store.state.main.user ? 'Click the lock icon to login in' : 'You are logged in as ' + $store.state.main.user.username }}</div>
-        <q-input v-model="service" ref="serviceInput" bg-color="grey-2" filled class="q-pt-sm" outlined label="Service" style="grid-area: search" @keydown.enter="hashService" />
+
+        <q-input filled v-model="service" ref="serviceInput" bg-color="grey-2" class="q-pt-md" outlined label="Service" style="grid-area: search" @keydown.enter="hashService" @keydown="filter" />
+
       </div>
       <div style="grid-area: services" class="services">
 
         <div style="grid-area: servicecards; display: grid" class="q-pa-md service-cards">
-          <service-card v-for="service in services" :service="service" class="" :key="service.name" @nosecret="toggleSecret" style="" />
+          <service-card v-for="service in services" :service="service" class="" :key="service.name" @deleted="updateServices" @nosecret="toggleSecret" style="" />
         </div>
       </div>
-      <login-modal ref="loginModal" class=""/>
+      <login-modal ref="loginModal" class="" @updateServices='updServices' @secretSet="hashService" />
       <secret-modal ref="secretModal" />
     </div>
   </q-page>
+
+  <!--
+  <q-select v-model="service" ref="serviceInput" bg-color="grey-2" filled class="q-pt-sm" outlined  use-input label="Service" style="grid-area: search" @keydown="changeInputModel"  @keydown.enter="hashService" :options="services" @filter="filterServices">
+
+          <template v-slot:option="scope">
+            <q-item
+              v-bind="scope.itemProps"
+              v-on="scope.itemEvents"
+              @click="log(scope)"
+            >
+              <q-item-section>
+                <q-item-label>{{ scope.opt.name }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                No results
+              </q-item-section>
+            </q-item>
+          </template>
+
+        </q-select>
+  -->
+
+
 </template>
 
 <style>
 
 .servicepage {
-
+  width: 100vw;
+  min-height: 100vh;
+  height: 100%;
   display: grid;
-  grid-template-rows: 1fr 8fr;
+  grid-template-rows: auto 1fr;
   grid-template-columns: 1fr 7fr 1fr;
 
   grid-template-areas:
@@ -46,11 +78,10 @@
 
 .services {
   display: grid;
-  grid-template-rows: auto 1fr;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr;
   grid-template-areas:
-    ". search ."
-    " servicecards servicecards servicecards";
+    " servicecards";
 }
 
 .service-cards {
@@ -94,12 +125,14 @@ import { sha256 } from 'js-sha256';
 import copy from 'copy-to-clipboard';
 import axios from 'axios'
 import { Cookies } from 'quasar'
+import Fuse from 'fuse.js'
 
 export default {
   name: 'PageIndex',
   data () {
     return {
-      services: [{name:"facebook"}, {name: "google"}, {name: 'github'}],
+      services: [],
+      options: [],
       loginModal: false,
       lockColor: 'grey-9',
       service: ''
@@ -114,6 +147,9 @@ export default {
     toggleLogin: function() {
       return this.$refs.loginModal.toggleVisible();
 
+    },
+    log: function(s) {
+      console.log(s);
     },
     hashService: async function() {
       if (!this.service) {
@@ -155,8 +191,39 @@ export default {
       Cookies.set('services', this.services)
 
     },
+    filter: function() {
+      const services = this.services;
+      const fuseOptions = {
+        keys: ['name']
+      }
+      console.log("1")
+      let fuse = new Fuse(services, fuseOptions);
+
+      let results = fuse.search(this.service)
+      console.log(results);
+
+      for (let result in results) {
+        results[result].key = result;
+      }
+
+      let reordered = results;
+      for (let service of services) {
+
+        if (!results.includes(service)) {
+          service.key = reordered.length;
+          reordered.push(service);
+        }
+      }
+      this.services = reordered;
+
+
+    },
+
     updateServices: async function() {
-      this.services = this.$store.dispatch('main/retrieveServices');
+      this.services = await this.$store.dispatch('main/retrieveServices');
+    },
+    updServices: function(services) {
+      this.services = services;
     },
     toggleSecret: function() {
       this.$refs.secretModal.toggleVisible();
@@ -169,7 +236,6 @@ export default {
   },
   created: async function() {
     if (this.$q.localStorage.has('services')) {
-      console.log("1")
       this.services = this.$q.localStorage.getItem("services")
     }
     this.services = await this.$store.dispatch('main/retrieveServices')

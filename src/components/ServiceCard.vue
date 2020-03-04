@@ -1,6 +1,6 @@
 <template>
   <q-card class="card">
-    <div class="container fit" >
+    <div class="container fit" @click="expanded" :style="[styling]">
 
       <q-img :src="favicon" style="align-self: center; height: 3em; width: 3em; grid-area: icon;"/>
 
@@ -9,6 +9,7 @@
       </div>
 
       <q-btn label="copy" color="teal" outline style="grid-area: button" @click="hashService"/>
+      <q-btn style="grid-area: delete" flat round color="red" icon="delete" @click="deleteService"/>
     </div>
 
   </q-card>
@@ -17,15 +18,16 @@
 <style lang="stylus">
 
 .card {
-  width: 15em;
-  height: 7.5em;
+  width: 100%;
+  height: 100%;
+  transition: all 0.2s;
 }
 .container {
   padding: 1em;
   display: grid;
-  grid-template-rows: 2fr 1fr;
-  grid-template-columns: 1fr 2fr;
-  grid-template-areas: "icon service" "icon button";
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 2fr 2em;
+  grid-template-areas: "icon service service" "icon button delete";
 }
 
 </style>
@@ -39,7 +41,10 @@ export default {
   name: 'ServiceCard',
   data () {
     return {
-      favicon: ''
+      favicon: '',
+      styling: {
+        gridColumn: "auto / span 2"
+      }
     }
   },
 
@@ -89,6 +94,21 @@ export default {
       })
 
     },
+    deleteService: async function() {
+      let id = this.$props.service.name;
+      let user = this.$store.state.main.user.id;
+      let res = await axios.delete(`services/${user}/${id}`);
+      if (res.status === 200) {
+        this.$q.notify("Successfully deleted " + this.$props.service.name);
+        this.$emit("deleted");
+      } else {
+        this.$q.notify("There was a issue deleting " + this.$props.service.name);
+      }
+
+    },
+    expanded: function() {
+      this.styling = {"grid-column": "auto / span 1"}
+    }
   },
 
   async created() {

@@ -1,25 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <!--
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          icon="menu"
-          aria-label="Menu"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-      -->
-    </q-header>
+  <q-layout view="lHh Lpr lFf" style="min-height:100vh !important">
 
     <q-page-container>
       <router-view />

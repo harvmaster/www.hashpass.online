@@ -11,11 +11,10 @@ export async function retrieveUser(context) {
       context.commit('setUser', null);
     } else {
       context.commit('setUser', userRes.data.user);
-      const services = await axios.get('/services/' + userRes.data.user.id);
-      console.log(userRes.data)
-      LocalStorage.set('services', services.data.services);
-      context.commit('setServices', services.data.services);
-      Cookies.set('services', services.data.services)
+      const services = userRes.data.services;
+      LocalStorage.set('services', services);
+      context.commit('setServices', services);
+      return userRes.data
     }
 }
 

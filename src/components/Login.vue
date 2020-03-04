@@ -79,7 +79,7 @@ export default {
   },
 
   methods: {
-    toggleVisible: function() {
+    toggleVisible: async function() {
       this.visible = !this.visible;
     },
 
@@ -98,10 +98,12 @@ export default {
         // Set the cookie as an Axios header
         axios.defaults.headers.common['authorization'] = Cookies.get('jwt_token');
         // Retrieve the actual user
-        await this.$store.dispatch('main/retrieveUser');
+        let user = await this.$store.dispatch('main/retrieveUser');
         this.$q.notify('Welcome back '+this.$store.state.main.user.username);
+        this.$emit('updateServices', user.services);
         this.toggleVisible();
       } catch (exception) {
+        this.$q.notify(exception.response.data)
         this.loginFormServerErrors = exception.response.data;
 
         let message = "<strong>Errors</Strong><p class='text-weight-bold'>"
