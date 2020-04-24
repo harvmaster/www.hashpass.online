@@ -13,9 +13,9 @@
           <q-input v-model="loginForm.user.password" label="Password" type="password" class="full-width"/>
           <q-checkbox v-model="loginForm.user.remember" label="Remember me" class="q-py-sm"/>
         </div>
-        <div style="grid-area: buttons; display: grid">
+        <div style="grid-area: buttons; display: grid; margin-top: -2em;">
           <q-btn label="Login" class="q-mx-xl" color="teal-6" style="" @click="login"/>
-          <p style="text-align: center; vertical-align: center; display: block; justify-self: center"  class="q-ma-lg">Or</p>
+          <strong style="text-align: center; vertical-align: center; display: block; justify-self: center; margin: 0.5em 0em 0.5em 0em;"  class="q-ma-lg">Or</strong>
           <q-btn label="Create An Account" class="q-mx-xl" color="teal-6" style="" @click="create"/>
         </div>
     </form>
@@ -31,7 +31,7 @@
 
 .login {
   display: grid;
-  grid-template-rows: 2fr 3fr 2fr;
+  grid-template-rows: 2fr 3fr 8em;
   grid-template-areas:
     "toolbar"
     "details"
@@ -99,7 +99,11 @@ export default {
         axios.defaults.headers.common['authorization'] = Cookies.get('jwt_token');
         // Retrieve the actual user
         let user = await this.$store.dispatch('main/retrieveUser');
-        this.$q.notify('Welcome back '+this.$store.state.main.user.username);
+        const message = "welcome back " + user.user.username;
+        this.$q.notify({
+          message: message,
+          color: 'teal-7'
+        })
         this.$emit('updateServices', user.services);
         this.toggleVisible();
       } catch (exception) {
@@ -126,6 +130,11 @@ export default {
         console.log("creating");
         this.loading = true;
         const res = await axios.post('/users/create', this.loginForm);
+        const message = "Your account was created successfully"
+        this.$q.notify({
+          message: message,
+          color: 'teal-7'
+        })
         this.login;
 
       } catch (exception) {

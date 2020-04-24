@@ -11,3 +11,10 @@ export function getUserId (store) {
   const user = store.state.user;
   if (user) return user.id
 }*/
+
+export function getServices(store) {
+  const services = store.state.main.services;
+  if (!services) return [];
+  else return services;
+};
+

@@ -42,19 +42,21 @@ export default {
     return {
       visible: false,
       loading: false,
-      secret: ''
+      secret: '',
+      service: '',
     }
   },
 
   methods: {
-    toggleVisible: function() {
+    toggleVisible: function(service) {
       this.visible = !this.visible;
+      this.service = service;
       if (this.visible) this.$nextTick( () => this.$refs.secret.focus());
     },
     setSecret: function() {
       const secret = this.secret;
       this.$q.sessionStorage.set('secret', secret);
-      this.$emit("secretSet")
+      this.$emit("secretSet", this.service)
       this.toggleVisible();
     }
 
