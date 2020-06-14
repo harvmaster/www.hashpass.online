@@ -134,7 +134,13 @@ export default {
       this.$refs.secretModal.toggleVisible(service);
     },
 
-    hash: async function (service) {
+    hash: async function (serviceObj) {
+      if (!serviceObj) serviceObj = {};
+
+      console.log(serviceObj.service)
+      let service = serviceObj.service;
+      let legacy = serviceObj.legacy;
+
       if (!service) service = this.service.toLowerCase();
       const secret = this.$q.sessionStorage.getItem('secret');
 
@@ -144,8 +150,15 @@ export default {
 
       let combined = secret + "-" + service;
 
-      for (let i = 0; i < 65536; i++) {
+      if (legacy) {
+        for (let i = 0; i < 65535; i++) {
+          combined = sha256.digest(combined)
+        }
         combined = sha256(combined);
+      } else {
+        for (let i = 0; i < 65536; i++) {
+          combined = sha256(combined);
+        }
       }
 
       combined = combined.slice(0, 16)
@@ -160,7 +173,7 @@ export default {
         html: true
       })
 
-      const res = await axios.post('/services/create', {service: service });
+      const res = await axios.post('/services/create', {service: service, legacy: legacy});
       if (res.status === 204) return;
       let services = this.$q.localStorage.getItem('services');
       services.push(res.data.service);

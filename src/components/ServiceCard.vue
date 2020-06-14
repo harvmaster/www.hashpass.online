@@ -8,6 +8,16 @@
         {{ service.name }}
       </div>
 
+      <div style="grid-area: algorithm;" class="q-px-sm">
+        <q-icon v-if="!updatingLegacy" :name="legacy ? 'hourglass_full' : 'hourglass_empty'" :color="legacy ? 'teal' : 'grey'" @click="changeLegacy"  size="sm">
+          <q-tooltip>
+            {{ legacy ? "Use updated Algorithm" : "Use Legacy Algorithm" }}
+          </q-tooltip>
+        </q-icon>
+
+        <q-spinner-hourglass color="teal" v-if="updatingLegacy" size="sm" />
+      </div>
+
       <q-btn label="copy" color="teal" outline style="grid-area: button" @click="hash"/>
       <q-btn style="grid-area: delete" flat round color="red" icon="delete" @click="deleteService"/>
     </div>
@@ -28,7 +38,7 @@
   display: grid;
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 2fr 2em;
-  grid-template-areas: "icon service service" "icon button delete";
+  grid-template-areas: "icon service algorithm" "icon button delete";
 }
 
 </style>
@@ -43,6 +53,8 @@ export default {
   data () {
     return {
       favicon: '',
+      legacy: false,
+      updatingLegacy: false,
       styling: {
         gridColumn: "auto / span 2"
       }
@@ -51,7 +63,7 @@ export default {
 
   methods: {
     hash: function () {
-      this.$emit('hash', this.$props.service.name)
+      this.$emit('hash', {service: this.$props.service.name, legacy: this.legacy});
     },
     deleteService: async function() {
       let id = this.$props.service.name;
@@ -61,17 +73,38 @@ export default {
         this.$q.notify("Successfully deleted " + this.$props.service.name);
         this.$emit("deleted");
       } else {
-        this.$q.notify("There was a issue deleting " + this.$props.service.name);
+        this.$q.notify("There was an issue deleting " + this.$props.service.name);
       }
 
     },
     expanded: function() {
       this.styling = {"grid-column": "auto / span 1"}
+    },
+    changeLegacy: async function() {
+      this.updatingLegacy = true;
+      this.legacy = !this.legacy;
+      //call api to save change
+
+      let id = this.$props.service.name;
+      let user = this.$store.state.main.user.id;
+      try {
+        let res = await axios.put(`services/${user}/${id}`, {legacy: this.legacy});
+
+        if(res.status === 200) {
+          this.$q.notify("Successfully updated " + this.$props.service.name);
+        } else {
+          this.$q.notify("There was an issue updating " + this.$props.service.name);
+        }
+      } catch (e) {
+        this.$q.notify(`There was an issue updating ${this.$props.service.name}, your change is still valid locally`);
+      } finally {
+        this.updatingLegacy = false;
+      }
     }
   },
 
   async created() {
-    //this.favicon = await this.getFavicon();
+    this.legacy = this.$props.service.legacy
   },
 
   props: {
