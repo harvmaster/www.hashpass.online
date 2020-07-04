@@ -9,18 +9,45 @@
       </div>
 
       <div style="grid-area: algorithm;" class="q-px-sm">
-        <q-icon v-if="!updatingLegacy" :name="legacy ? 'hourglass_full' : 'hourglass_empty'" :color="legacy ? 'teal' : 'grey'" @click="changeLegacy"  size="sm">
-          <q-tooltip>
-            {{ legacy ? "Use updated Algorithm" : "Use Legacy Algorithm" }}
-          </q-tooltip>
+        <q-icon
+        name="more_vert"
+        >
+          <q-popup-proxy :offset="[22, -32]">
+            <q-list class="q-pt-sm">
+              <q-item>
+                <q-icon v-if="!updatingLegacy" :name="legacy ? 'hourglass_full' : 'hourglass_empty'" :color="legacy ? 'teal' : 'grey'" @click="changeLegacy"  size="sm">
+                  <q-tooltip>
+                    {{ legacy ? "Use updated Algorithm" : "Use Legacy Algorithm" }}
+                  </q-tooltip>
+                </q-icon>
+                <q-spinner-hourglass color="teal" v-if="updatingLegacy" size="sm" />
+              </q-item>
+              <q-item>
+                <q-icon v-if="!updatingLegacy" :name="'add_photo_alternate'" :color="legacy ? 'teal' : 'grey'" @click="toggleUploader" size="sm">
+                  <q-tooltip>
+                    {{ legacy ? "Use updated Algorithm" : "Use Legacy Algorithm" }}
+                  </q-tooltip>
+                 <!-- <q-popup-proxy :offset="[280, -31]">
+                    <q-uploader />
+                  </q-popup-proxy>
+                  -->
+                </q-icon>
+              </q-item>
+            </q-list>
+          </q-popup-proxy>
+
         </q-icon>
 
-        <q-spinner-hourglass color="teal" v-if="updatingLegacy" size="sm" />
+        
+
+        
       </div>
 
       <q-btn label="copy" color="teal" outline style="grid-area: button" @click="hash"/>
       <q-btn style="grid-area: delete" flat round color="red" icon="delete" @click="deleteService"/>
     </div>
+
+    <uploader v-model="uploads" ref="uploader" :accept="['images']" :service="service.id" />
 
   </q-card>
 </template>
@@ -47,6 +74,7 @@
 import axios from 'axios'
 import { sha256 }  from 'js-sha256'
 import copy from 'copy-to-clipboard';
+import Uploader from './FileUploader_dialog'
 
 export default {
   name: 'ServiceCard',
@@ -57,7 +85,8 @@ export default {
       updatingLegacy: false,
       styling: {
         gridColumn: "auto / span 2"
-      }
+      },
+      uploads: []
     }
   },
 
@@ -100,6 +129,10 @@ export default {
       } finally {
         this.updatingLegacy = false;
       }
+    },
+    toggleUploader: function() {
+      this.$refs.uploader.toggleVisible();
+
     }
   },
 
@@ -111,6 +144,10 @@ export default {
     service: {
       type: Object,
     }
+  },
+  
+  components: {
+    Uploader
   }
 }
 </script>

@@ -1,6 +1,6 @@
-# Hashpass (hashpass)
+# Quasar App (www.hashpass.com)
 
-Generate secure passwords
+A Quasar Framework app
 
 ## Install the dependencies
 ```bash
