@@ -2,7 +2,7 @@
   <q-card class="card">
     <div class="container fit" @click="expanded" :style="[styling]">
 
-      <q-img :src="service.logo" style="align-self: center; height: 3em; width: 3em; grid-area: icon;"/>
+      <q-img :src="service.logo" style="align-self: center; height: 3em; width: 3em; grid-area: icon; border-radius: 10%"/>
 
       <div style="grid-area: service;" class="text-h5 ellipsis">
         {{ service.name }}
@@ -23,14 +23,10 @@
                 <q-spinner-hourglass color="teal" v-if="updatingLegacy" size="sm" />
               </q-item>
               <q-item>
-                <q-icon v-if="!updatingLegacy" :name="'add_photo_alternate'" :color="legacy ? 'teal' : 'grey'" @click="toggleUploader" size="sm">
+                <q-icon v-if="!updatingLegacy" :name="'add_photo_alternate'" color="teal" @click="toggleUploader" size="sm">
                   <q-tooltip>
-                    {{ legacy ? "Use updated Algorithm" : "Use Legacy Algorithm" }}
+                    Upload a custom Icon
                   </q-tooltip>
-                 <!-- <q-popup-proxy :offset="[280, -31]">
-                    <q-uploader />
-                  </q-popup-proxy>
-                  -->
                 </q-icon>
               </q-item>
             </q-list>
@@ -38,9 +34,6 @@
 
         </q-icon>
 
-        
-
-        
       </div>
 
       <q-btn label="copy" color="teal" outline style="grid-area: button" @click="hash"/>
@@ -64,7 +57,7 @@
   padding: 1em;
   display: grid;
   grid-template-rows: 1fr 1fr;
-  grid-template-columns: 1fr 2fr 2em;
+  grid-template-columns: 1fr 2fr auto;
   grid-template-areas: "icon service algorithm" "icon button delete";
 }
 
@@ -145,7 +138,7 @@ export default {
       type: Object,
     }
   },
-  
+
   components: {
     Uploader
   }

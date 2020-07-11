@@ -135,7 +135,7 @@ export default {
           message: message,
           color: 'teal-7'
         })
-        this.login;
+        await this.login();
 
       } catch (exception) {
         this.loginFormServerErrors = exception.response.data;

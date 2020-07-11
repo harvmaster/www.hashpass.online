@@ -2,7 +2,7 @@
   <q-dialog v-model="visible" persistent style="">
     <div class="bg-grey-2">
       <div class="row q-mx-md q-mt-md">
-        <q-uploader ref="uploader" :label="label" dense autofocus :batch="batch" :multiple="multiple" :filter="filterFiles" :headers="header" :url="url" field-name="file" @uploaded="filesUploaded" @added="filesAdded" :form-fields="fieldForm"/>
+        <q-uploader ref="uploader" :label="label" dense autofocus :batch="batch" :multiple="multiple" :filter="filterFiles" :headers="header" :url="url" field-name="file" @uploaded="filesUploaded" @added="filesAdded" :form-fields="fieldForm" color="teal"/>
       </div>
       <div class="row q-ma-sm">
         <div class="col" />

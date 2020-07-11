@@ -13,7 +13,7 @@ export default {
   created: function() {
     // Setup Base URL for API
     axios.defaults.baseURL = 'http://localhost:3000/api'
-    //axios.defaults.baseURL = 'https://api.hashpass.online/api';
+    // axios.defaults.baseURL = 'https://api.hashpass.online/api';
     //axios.defaults.headers.common['Origin'] = 'http://youlease.com.au';
 
     // If there is a JWT token, get the user
