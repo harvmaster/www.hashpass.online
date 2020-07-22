@@ -2,31 +2,27 @@
   <q-page class="flex flex-center" style="min-height: 100vh !important;">
     <div class=" servicepage bg-teal-4 q-py-xl">
       <div style="grid-area: header; display: grid" class="header">
+
         <div style="grid-area: icon; display: grid; grid-template-columns: 2fr auto 2 fr; grid-template-area: '. ic .'" class="fit">
           <q-icon name="lock_open" class="" :color="lockColor" rounded size="5em" style="grid-area: ic" @click="toggleLogin" @mouseover="lockColor='red-4'" @mouseleave="lockColor='grey-9'"/>
         </div>
         <div style="grid-area: subtitle; text-align: center" class="text-subtitle2">{{ !$store.state.main.user ? 'Click the lock icon to login in' : 'You are logged in as ' + $store.state.main.user.username }}</div>
-
         <q-input filled v-model="service" ref="serviceInput" bg-color="grey-2" class="q-pt-md" outlined label="Service" style="grid-area: search" @keydown.enter="hash(null)" @keydown="filter" />
-
-
         <a style="grid-area: clearbit; text-align: center;" class="q-pt-sm" href="https://clearbit.com">Logos provided by Clearbit</a>
 
       </div>
-      <div style="grid-area: services" class="services">
 
+      <div style="grid-area: services" class="services">
         <div style="grid-area: servicecards; display: grid" class="q-pa-md service-cards">
           <service-card v-for="service in $store.state.main.services" :service="service" class="" :key="service.name" @deleted="updateServices" @hash="hash" style="" />
-
         </div>
-
       </div>
+
       <login-modal ref="loginModal" class="" @updateServices='updateServices' />
       <secret-modal ref="secretModal" @secretSet="hash" />
       <logout-modal ref="logoutModal" />
     </div>
   </q-page>
-
 
 </template>
 
@@ -182,7 +178,6 @@ export default {
       this.service = ''
     },
 
-
     filter: function() {
       const services = this.services;
       const fuseOptions = {
@@ -207,8 +202,6 @@ export default {
         }
       }
       this.services = reordered;
-
-
     },
 
     deleteService: function(service) {
@@ -226,7 +219,6 @@ export default {
   mounted() {
     this.$refs.serviceInput.focus();
   },
-
 
   created: async function() {
     if (this.$q.localStorage.has('services')) {

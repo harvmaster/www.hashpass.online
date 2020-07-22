@@ -86,6 +86,7 @@ export default {
     login: async function() {
       try {
         this.loading = true;
+        this.loginForm.user.username = this.loginForm.user.username.toLowerCase()
         var authRes = await axios.post('/users/login', this.loginForm);
 
         // Set cookie and expiration time
@@ -129,6 +130,7 @@ export default {
       try {
         console.log("creating");
         this.loading = true;
+        this.loginForm.user.username = this.loginForm.user.username.toLowerCase()
         const res = await axios.post('/users/create', this.loginForm);
         const message = "Your account was created successfully"
         this.$q.notify({

@@ -31,7 +31,6 @@
               </q-item>
             </q-list>
           </q-popup-proxy>
-
         </q-icon>
 
       </div>
@@ -105,8 +104,8 @@ export default {
     changeLegacy: async function() {
       this.updatingLegacy = true;
       this.legacy = !this.legacy;
-      //call api to save change
 
+      //call api to save change
       let id = this.$props.service.name;
       let user = this.$store.state.main.user.id;
       try {
