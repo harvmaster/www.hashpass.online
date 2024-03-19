@@ -87,7 +87,9 @@ export default {
       try {
         this.loading = true;
         this.loginForm.user.username = this.loginForm.user.username.toLowerCase()
+        console.log('Sending login request...')
         var authRes = await axios.post('/users/login', this.loginForm);
+        console.log('Login request successful!')
 
         // Set cookie and expiration time
         var decodedToken = jwtDecode(authRes.data.user.token);
@@ -96,16 +98,23 @@ export default {
           expires: tokenExpires
         });
 
+        console.log('Decoded token: ', decodedToken)
+
         // Set the cookie as an Axios header
         axios.defaults.headers.common['authorization'] = Cookies.get('jwt_token');
         // Retrieve the actual user
+
+        console.log('retrieving user')
         let user = await this.$store.dispatch('main/retrieveUser');
+        console.log('user retrieved')
         const message = "welcome back " + user.user.username;
         this.$q.notify({
           message: message,
           color: 'teal-7'
         })
+        console.log('emitting updateServices event...')
         this.$emit('updateServices', user.services);
+        console.log('Emitted Event')
         this.toggleVisible();
       } catch (exception) {
         this.$q.notify(exception.response.data)
