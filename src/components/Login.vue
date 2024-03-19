@@ -57,9 +57,9 @@
 <script>
 import axios from 'axios'
 import { Cookies } from 'quasar'
-import { Notify } from 'quasar'
+// import { Notify } from 'quasar'
 import jwtDecode from 'jwt-decode'
-import { required, email } from 'vuelidate/lib/validators'
+// import { required, email } from 'vuelidate/lib/validators'
 
 export default {
   data () {
@@ -117,8 +117,9 @@ export default {
         console.log('Emitted Event')
         this.toggleVisible();
       } catch (exception) {
-        this.$q.notify(exception.response.data)
-        this.loginFormServerErrors = exception.response.data;
+        console.log(exception)
+        this.$q.notify(exception?.response?.data)
+        this.loginFormServerErrors = exception?.response?.data;
 
         let message = "<strong>Errors</Strong><p class='text-weight-bold'>"
         for (let error of exception.response.data.errors) {
